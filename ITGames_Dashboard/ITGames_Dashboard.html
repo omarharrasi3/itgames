@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة المعلم — نتائج الألعاب</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="../ITGames_Config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --bg:#f4f6fb; --panel:#ffffff; --ink:#1b2440; --muted:#66708a; --line:#dde2ee;
+    --brand:#283593; --brand2:#3d5afe; --ok:#1e8e4e; --okbg:#e6f6ed; --bad:#c62828; --badbg:#fdecec;
+    --warn:#a35f00; --warnbg:#fff4e0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Cairo',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+  button,select,input{font-family:inherit;font-size:15px}
+  .hidden{display:none !important}
+  header{background:linear-gradient(90deg,#1a237e,#283593);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  header h1{font-size:20px;font-weight:800}
+  header .who{font-size:13px;opacity:.85}
+  main{max-width:1250px;margin:0 auto;padding:16px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(20,30,80,.05)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:4px;min-width:160px;flex:1}
+  .field label{font-size:13px;font-weight:700;color:var(--muted)}
+  select,input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  .btn{padding:9px 16px;border:none;border-radius:10px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:var(--brand2)}
+  .btn.light{background:#eef1fb;color:var(--brand)}
+  .btn.light:hover{background:#dfe4fb}
+  .btn.green{background:var(--ok)}
+  .btn.small{padding:5px 10px;font-size:13px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .stat .v{font-size:26px;font-weight:800;color:var(--brand);direction:ltr}
+  .stat .l{font-size:13px;color:var(--muted);font-weight:700}
+  .tablewrap{overflow:auto;max-height:65vh;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+  th{background:#eef1fb;color:var(--brand);font-weight:800;position:sticky;top:0;z-index:1}
+  td.nm{text-align:start;font-weight:700}
+  tr.sub td{background:#fafbff;font-size:13px}
+  .pill{display:inline-block;padding:2px 10px;border-radius:20px;font-weight:700;direction:ltr}
+  .pill.hi{background:var(--okbg);color:var(--ok)}
+  .pill.mid{background:var(--warnbg);color:var(--warn)}
+  .pill.lo{background:var(--badbg);color:var(--bad)}
+  .cancelled{text-decoration:line-through;color:#999}
+  .muted{color:var(--muted);font-size:13px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .login{max-width:380px;margin:12vh auto}
+  .login h2{text-align:center;margin-bottom:12px;color:var(--brand)}
+  .msg{margin-top:10px;font-size:14px;text-align:center}
+  .msg.err{color:var(--bad)}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1a237e;color:#fff;border-radius:30px;padding:10px 20px;font-weight:700;z-index:90}
+  .modal{position:fixed;inset:0;background:rgba(10,15,40,.45);display:flex;align-items:center;justify-content:center;z-index:80;padding:16px}
+  .modal .panel{max-width:440px;width:100%}
+  .modal h3{margin-bottom:10px;color:var(--brand)}
+  .opt{display:flex;gap:8px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer}
+  @media (max-width:600px){ .field{min-width:100%} }
+</style>
+</head>
+<body>
+
+<!-- ============ تسجيل الدخول ============ -->
+<section id="loginView">
+  <div class="panel login">
+    <h2>🔒 لوحة المعلم</h2>
+    <div class="field"><label for="pw">كلمة المرور</label><input id="pw" type="password" autocomplete="current-password"></div>
+    <button class="btn" id="loginBtn" style="width:100%;margin-top:12px">دخول</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</section>
+
+<!-- ============ اللوحة ============ -->
+<section id="dashView" class="hidden">
+  <header>
+    <div><h1>📊 نتائج ألعاب تقنية المعلومات</h1><div class="who" id="updated"></div></div>
+    <div class="actions">
+      <button class="btn light" id="refreshBtn">🔄 تحديث</button>
+      <button class="btn green" id="exportViewBtn">⬇️ تصدير العرض الحالي (Excel)</button>
+      <button class="btn green" id="exportAllBtn">⬇️ تصدير كل النتائج (Excel)</button>
+    </div>
+  </header>
+  <main>
+    <div class="panel">
+      <div class="row">
+        <div class="field"><label for="fGrade">الصف</label><select id="fGrade"></select></div>
+        <div class="field"><label for="fClass">الشعبة</label><select id="fClass"></select></div>
+        <div class="field" style="flex:2"><label for="fGame">اللعبة</label><select id="fGame"></select></div>
+        <div class="field"><label for="fSearch">بحث بالاسم</label><input id="fSearch" placeholder="اكتب جزءًا من الاسم"></div>
+      </div>
+      <p class="muted" style="margin-top:10px">الدرجة المعتمدة = <b>أول محاولة غير ملغاة</b>. لدمج اسمين كُتبا بطريقتين مختلفتين، حدّد المربعين ثم اضغط «دمج».</p>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px">
+        <b id="tableTitle"></b>
+        <button class="btn light small" id="mergeBtn" disabled>🔗 دمج الاسمين المحددين</button>
+      </div>
+      <div class="tablewrap"><table id="tbl"></table></div>
+      <div class="muted" id="emptyMsg" style="margin-top:10px"></div>
+    </div>
+  </main>
+</section>
+
+<!-- نافذة الدمج -->
+<div id="mergeModal" class="modal hidden">
+  <div class="panel">
+    <h3>دمج اسمين</h3>
+    <p class="muted" style="margin-bottom:10px">اختر الاسم الذي تريد الإبقاء عليه. ستُضم محاولات الاسم الآخر إليه.</p>
+    <div id="mergeOpts"></div>
+    <div class="actions" style="margin-top:10px">
+      <button class="btn" id="mergeOk">دمج</button>
+      <button class="btn light" id="mergeCancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var TOKEN = null, DATA = null, OPEN = {}, SELECTED = [];
+
+function $(id){ return document.getElementById(id); }
+function toast(m){ var t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3000); }
+function server(){ return itgamesCall.apply(null, arguments); }
+function el(tag, attrs, text){
+  var e = document.createElement(tag);
+  if (attrs) Object.keys(attrs).forEach(function(k){ if (k === 'class') e.className = attrs[k]; else e.setAttribute(k, attrs[k]); });
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function fmtTime(iso){
+  var d = new Date(iso); if (isNaN(d)) return iso;
+  return d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+}
+function pctClass(p){ return p >= 80 ? 'hi' : p >= 50 ? 'mid' : 'lo'; }
+function avg(a){ return a.length ? a.reduce(function(x, y){ return x + y; }, 0) / a.length : 0; }
+function round1(n){ return Math.round(n * 10) / 10; }
+
+/* ---------------- الدخول ---------------- */
+function login(){
+  var pw = $('pw').value;
+  $('loginMsg').className = 'msg'; $('loginMsg').textContent = 'جارٍ التحقق…';
+  server('dashLogin', pw).then(function(t){
+    TOKEN = t;
+    $('loginView').classList.add('hidden'); $('dashView').classList.remove('hidden');
+    load();
+  }).catch(function(e){ $('loginMsg').className = 'msg err'; $('loginMsg').textContent = e.message; });
+}
+
+function load(){
+  $('updated').textContent = 'جارٍ تحميل النتائج…';
+  server('dashData', TOKEN).then(function(d){
+    DATA = d;
+    $('updated').textContent = 'آخر تحديث: ' + fmtTime(new Date().toISOString()) + ' — عدد المحاولات المسجلة: ' + d.rows.length;
+    fillFilters();
+    render();
+  }).catch(function(e){
+    toast(e.message);
+    if (/سجّل الدخول/.test(e.message)) { $('dashView').classList.add('hidden'); $('loginView').classList.remove('hidden'); }
+  });
+}
+
+/* ---------------- المرشحات ---------------- */
+function fillFilters(){
+  var g = $('fGrade'), keep = g.value;
+  g.innerHTML = '';
+  Object.keys(DATA.classes).forEach(function(gr){ g.appendChild(el('option', {value: gr}, 'الصف ' + gr)); });
+  if (keep) g.value = keep;
+  fillGradeDeps();
+}
+function fillGradeDeps(){
+  var gr = Number($('fGrade').value);
+  var c = $('fClass'), keepC = c.value; c.innerHTML = '';
+  c.appendChild(el('option', {value: ''}, 'كل الشعب'));
+  DATA.classes[gr].forEach(function(x){ c.appendChild(el('option', {value: x}, x)); });
+  if (DATA.classes[gr].indexOf(keepC) >= 0) c.value = keepC;
+  var s = $('fGame'), keepG = s.value; s.innerHTML = '';
+  s.appendChild(el('option', {value: ''}, 'كل الألعاب (درجة كل لعبة في عمود)'));
+  gamesOf(gr).forEach(function(g){ s.appendChild(el('option', {value: g.id}, g.title)); });
+  if (gamesOf(gr).some(function(g){ return g.id === keepG; })) s.value = keepG;
+}
+function gamesOf(gr){ return DATA.games.filter(function(g){ return g.grade === gr; }); }
+function gameById(id){ return DATA.games.filter(function(g){ return g.id === id; })[0] || {title: id}; }
+
+/* ---------------- تجميع البيانات ---------------- */
+/* يعيد قائمة الطلبة: كل طالب = شعبة + اسم موحّد، ولكل لعبة محاولاته مرتبة زمنيًا */
+function students(grade, cls, search){
+  var map = {};
+  DATA.rows.forEach(function(r){
+    if (r.grade !== grade || (cls && r.cls !== cls)) return;
+    var key = r.cls + '|' + r.canon;
+    var s = map[key] || (map[key] = {key: key, cls: r.cls, canon: r.canon, names: {}, games: {}});
+    s.names[r.raw] = true;
+    (s.games[r.game] = s.games[r.game] || []).push(r);
+  });
+  var list = Object.keys(map).map(function(k){
+    var s = map[k];
+    Object.keys(s.games).forEach(function(g){
+      s.games[g].sort(function(a, b){ return a.time < b.time ? -1 : 1; });
+    });
+    s.display = Object.keys(s.names)[0];
+    return s;
+  });
+  if (search) {
+    var q = search.trim();
+    list = list.filter(function(s){ return Object.keys(s.names).some(function(n){ return n.indexOf(q) >= 0; }) || s.canon.indexOf(q) >= 0; });
+  }
+  list.sort(function(a, b){ return a.cls === b.cls ? a.display.localeCompare(b.display, 'ar') : a.cls.localeCompare(b.cls); });
+  return list;
+}
+function firstValid(atts){ return (atts || []).filter(function(a){ return a.status !== 'ملغاة'; })[0] || null; }
+
+/* ---------------- العرض ---------------- */
+function render(){
+  var grade = Number($('fGrade').value), cls = $('fClass').value, game = $('fGame').value;
+  var list = students(grade, cls, $('fSearch').value);
+  SELECTED = []; $('mergeBtn').disabled = true;
+  if (game) renderGame(list, game); else renderMatrix(list, grade);
+}
+
+function statCards(items){
+  var box = $('stats'); box.innerHTML = '';
+  items.forEach(function(it){
+    var d = el('div', {class: 'stat'});
+    d.appendChild(el('div', {class: 'v'}, it[1])); d.appendChild(el('div', {class: 'l'}, it[0]));
+    box.appendChild(d);
+  });
+}
+
+function renderGame(list, gameId){
+  var g = gameById(gameId);
+  var played = list.filter(function(s){ return firstValid(s.games[gameId]); });
+  var pcts = played.map(function(s){ return firstValid(s.games[gameId]).pct; });
+  var attempts = list.reduce(function(n, s){ return n + (s.games[gameId] || []).length; }, 0);
+  statCards([
+    ['طلبة لعبوا', played.length],
+    ['متوسط الدرجة المعتمدة', pcts.length ? round1(avg(pcts)) + '%' : '—'],
+    ['أعلى درجة', pcts.length ? Math.max.apply(null, pcts) + '%' : '—'],
+    ['أدنى درجة', pcts.length ? Math.min.apply(null, pcts) + '%' : '—'],
+    ['إجمالي المحاولات', attempts]
+  ]);
+  $('tableTitle').textContent = g.title;
+  var t = $('tbl'); t.innerHTML = '';
+  var head = el('tr');
+  ['', 'م', 'اسم الطالب', 'الشعبة', 'الدرجة المعتمدة', 'النسبة', 'عدد المحاولات', 'وقت المحاولة المعتمدة', ''].forEach(function(h){ head.appendChild(el('th', null, h)); });
+  t.appendChild(head);
+  var rows = list.filter(function(s){ return s.games[gameId]; });
+  rows.forEach(function(s, i){
+    var atts = s.games[gameId], f = firstValid(atts);
+    var tr = el('tr');
+    tr.appendChild(checkCell(s));
+    tr.appendChild(el('td', null, i + 1));
+    var nm = el('td', {class: 'nm'}, s.display);
+    if (Object.keys(s.names).length > 1) nm.appendChild(el('div', {class: 'muted'}, 'كُتب أيضًا: ' + Object.keys(s.names).slice(1).join('، ')));
+    tr.appendChild(nm);
+    tr.appendChild(el('td', null, s.cls));
+    var sc = el('td'); if (f) sc.appendChild(el('span', {dir: 'ltr'}, f.score + ' / ' + f.total)); else sc.textContent = 'كل المحاولات ملغاة'; tr.appendChild(sc);
+    var pc = el('td'); if (f) pc.appendChild(el('span', {class: 'pill ' + pctClass(f.pct)}, f.pct + '%')); tr.appendChild(pc);
+    tr.appendChild(el('td', null, atts.length));
+    tr.appendChild(el('td', null, f ? fmtTime(f.time) : '—'));
+    var tg = el('td'); var b = el('button', {class: 'btn light small'}, OPEN[s.key] ? 'إخفاء المحاولات' : 'المحاولات');
+    b.onclick = function(){ OPEN[s.key] = !OPEN[s.key]; render(); };
+    tg.appendChild(b); tr.appendChild(tg);
+    t.appendChild(tr);
+    if (OPEN[s.key]) atts.forEach(function(a, k){
+      var sr = el('tr', {class: 'sub'});
+      sr.appendChild(el('td')); sr.appendChild(el('td', null, '↳ ' + (k + 1)));
+      var c = el('td', {class: 'nm' + (a.status === 'ملغاة' ? ' cancelled' : '')}, a.raw + (a === f ? '  ✔ معتمدة' : ''));
+      sr.appendChild(c);
+      sr.appendChild(el('td', null, a.cls));
+      var ss = el('td', {class: a.status === 'ملغاة' ? 'cancelled' : ''}); ss.appendChild(el('span', {dir: 'ltr'}, a.score + ' / ' + a.total)); sr.appendChild(ss);
+      sr.appendChild(el('td', null, a.pct + '%'));
+      sr.appendChild(el('td', null, a.secs ? Math.round(a.secs / 60) + ' د' : '—'));
+      sr.appendChild(el('td', null, fmtTime(a.time)));
+      var act = el('td'); var cb = el('button', {class: 'btn light small'}, a.status === 'ملغاة' ? 'استعادة' : 'إلغاء المحاولة');
+      cb.onclick = function(){ setStatus(a, a.status !== 'ملغاة'); };
+      act.appendChild(cb); sr.appendChild(act);
+      t.appendChild(sr);
+    });
+  });
+  $('emptyMsg').textContent = rows.length ? '' : 'لا توجد نتائج لهذه اللعبة بعد.';
+}
+
+function renderMatrix(list, grade){
+  var games = gamesOf(grade);
+  var all = [];
+  list.forEach(function(s){ games.forEach(function(g){ var f = firstValid(s.games[g.id]); if (f) all.push(f.pct); }); });
+  statCards([
+    ['طلبة لعبوا', list.length],
+    ['عدد الألعاب', games.length],
+    ['متوسط كل الدرجات المعتمدة', all.length ? round1(avg(all)) + '%' : '—'],
+    ['إجمالي المحاولات', list.reduce(function(n, s){ return n + Object.keys(s.games).reduce(function(m, g){ return m + s.games[g].length; }, 0); }, 0)]
+  ]);
+  $('tableTitle').textContent = 'كل الألعاب — الصف ' + grade + ' (الدرجة المعتمدة لكل لعبة)';
+  var t = $('tbl'); t.innerHTML = '';
+  var head = el('tr');
+  ['', 'م', 'اسم الطالب', 'الشعبة'].forEach(function(h){ head.appendChild(el('th', null, h)); });
+  games.forEach(function(g){ head.appendChild(el('th', {title: g.title}, shortTitle(g))); });
+  head.appendChild(el('th', null, 'المتوسط'));
+  t.appendChild(head);
+  list.forEach(function(s, i){
+    var tr = el('tr');
+    tr.appendChild(checkCell(s));
+    tr.appendChild(el('td', null, i + 1));
+    tr.appendChild(el('td', {class: 'nm'}, s.display));
+    tr.appendChild(el('td', null, s.cls));
+    var ps = [];
+    games.forEach(function(g){
+      var f = firstValid(s.games[g.id]), td = el('td');
+      if (f) { td.appendChild(el('span', {class: 'pill ' + pctClass(f.pct)}, f.score + '/' + f.total)); ps.push(f.pct); }
+      else td.textContent = '—';
+      tr.appendChild(td);
+    });
+    tr.appendChild(el('td', null, ps.length ? round1(avg(ps)) + '%' : '—'));
+    t.appendChild(tr);
+  });
+  $('emptyMsg').textContent = list.length ? '' : 'لا توجد نتائج لهذا الصف بعد.';
+}
+function shortTitle(g){ return (g.lesson ? 'درس ' + g.lesson + ' — ' : 'وحدة ' + g.unit + ' — ') + g.title.split('—')[0].trim(); }
+
+function checkCell(s){
+  var td = el('td'), cb = el('input', {type: 'checkbox'});
+  cb.onchange = function(){
+    if (cb.checked) SELECTED.push(s); else SELECTED = SELECTED.filter(function(x){ return x !== s; });
+    $('mergeBtn').disabled = SELECTED.length !== 2;
+  };
+  td.appendChild(cb); return td;
+}
+
+/* ---------------- الإجراءات ---------------- */
+function setStatus(a, cancel){
+  if (cancel && !confirm('إلغاء هذه المحاولة؟ ستُعتمد المحاولة التالية للطالب (إن وُجدت).')) return;
+  server('dashSetStatus', TOKEN, a.id, cancel).then(function(){ toast(cancel ? 'تم إلغاء المحاولة' : 'تمت استعادة المحاولة'); load(); })
+    .catch(function(e){ toast(e.message); });
+}
+
+function openMerge(){
+  if (SELECTED.length !== 2) return;
+  if (SELECTED[0].cls !== SELECTED[1].cls) { toast('يمكن دمج اسمين من الشعبة نفسها فقط'); return; }
+  var box = $('mergeOpts'); box.innerHTML = '';
+  SELECTED.forEach(function(s, k){
+    var lab = el('label', {class: 'opt'});
+    var r = el('input', {type: 'radio', name: 'keep', value: k}); if (k === 0) r.checked = true;
+    lab.appendChild(r); lab.appendChild(el('span', null, s.display + ' (' + s.cls + ')'));
+    box.appendChild(lab);
+  });
+  $('mergeModal').classList.remove('hidden');
+}
+function doMerge(){
+  var keep = Number(document.querySelector('input[name=keep]:checked').value);
+  var to = SELECTED[keep], from = SELECTED[1 - keep];
+  $('mergeModal').classList.add('hidden');
+  server('dashMerge', TOKEN, from.cls, from.canon, to.canon).then(function(){ toast('تم الدمج'); load(); })
+    .catch(function(e){ toast(e.message); });
+}
+
+/* ---------------- التصدير إلى Excel ---------------- */
+function today(){ var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function sheetFrom(rows, widths){
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = widths.map(function(w){ return {wch: w}; });
+  return ws;
+}
+function safeSheetName(n){ return n.replace(/[\\\/\?\*\[\]:]/g, '-').slice(0, 31); }
+function saveBook(wb, name){
+  wb.Workbook = {Views: [{RTL: true}]};
+  XLSX.writeFile(wb, name);
+}
+
+function matrixRows(list, games){
+  var head = ['م', 'اسم الطالب', 'الشعبة'];
+  games.forEach(function(g){ head.push(shortTitle(g) + ' (الدرجة)', 'من', 'المحاولات'); });
+  head.push('متوسط النسبة %');
+  var rows = [head];
+  list.forEach(function(s, i){
+    var r = [i + 1, s.display, s.cls], ps = [];
+    games.forEach(function(g){
+      var f = firstValid(s.games[g.id]);
+      r.push(f ? f.score : '', f ? f.total : '', (s.games[g.id] || []).length || '');
+      if (f) ps.push(f.pct);
+    });
+    r.push(ps.length ? round1(avg(ps)) : '');
+    rows.push(r);
+  });
+  return rows;
+}
+function attemptRows(filterFn){
+  var rows = [['التاريخ والوقت', 'الصف', 'الشعبة', 'الاسم كما كُتب', 'الاسم بعد الدمج', 'اللعبة', 'الدرجة', 'من', 'النسبة %', 'رقم المحاولة', 'المدة (دقيقة)', 'وسائل المساعدة', 'الحالة']];
+  DATA.rows.filter(filterFn).sort(function(a, b){ return a.time < b.time ? -1 : 1; }).forEach(function(r){
+    rows.push([fmtTime(r.time), r.grade, r.cls, r.raw, r.canon, r.gameTitle, r.score, r.total, r.pct, r.attempt,
+      r.secs ? round1(r.secs / 60) : '', r.lifelines, r.status]);
+  });
+  return rows;
+}
+
+function exportView(){
+  if (typeof XLSX === 'undefined') { toast('تعذّر تحميل مكتبة Excel، تحقق من الاتصال بالإنترنت'); return; }
+  var grade = Number($('fGrade').value), cls = $('fClass').value, game = $('fGame').value;
+  var list = students(grade, cls, $('fSearch').value);
+  var games = game ? [gameById(game)] : gamesOf(grade);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, sheetFrom(matrixRows(list, games), [5, 28, 8].concat(games.map(function(){ return 14; }))), 'الدرجات');
+  XLSX.utils.book_append_sheet(wb, sheetFrom(attemptRows(function(r){
+    return r.grade === grade && (!cls || r.cls === cls) && (!game || r.game === game);
+  }), [18, 6, 8, 28, 28, 40, 7, 5, 9, 10, 10, 10, 8]), 'كل المحاولات');
+  saveBook(wb, 'نتائج الألعاب - الصف ' + grade + (cls ? ' - ' + cls.replace('/', '-') : '') + ' - ' + today() + '.xlsx');
+}
+
+function exportAll(){
+  if (typeof XLSX === 'undefined') { toast('تعذّر تحميل مكتبة Excel، تحقق من الاتصال بالإنترنت'); return; }
+  var wb = XLSX.utils.book_new();
+  Object.keys(DATA.classes).forEach(function(gr){
+    var games = gamesOf(Number(gr));
+    DATA.classes[gr].forEach(function(cls){
+      var list = students(Number(gr), cls, '');
+      XLSX.utils.book_append_sheet(wb, sheetFrom(matrixRows(list, games), [5, 28, 8].concat(games.map(function(){ return 14; }))), safeSheetName('الشعبة ' + cls));
+    });
+  });
+  XLSX.utils.book_append_sheet(wb, sheetFrom(attemptRows(function(){ return true; }), [18, 6, 8, 28, 28, 40, 7, 5, 9, 10, 10, 10, 8]), 'كل المحاولات');
+  saveBook(wb, 'نتائج الألعاب - كل الشعب - ' + today() + '.xlsx');
+}
+
+/* ---------------- الأحداث ---------------- */
+$('loginBtn').onclick = login;
+$('pw').addEventListener('keydown', function(e){ if (e.key === 'Enter') login(); });
+$('refreshBtn').onclick = load;
+$('fGrade').onchange = function(){ fillGradeDeps(); render(); };
+$('fClass').onchange = render;
+$('fGame').onchange = render;
+$('fSearch').oninput = render;
+$('mergeBtn').onclick = openMerge;
+$('mergeOk').onclick = doMerge;
+$('mergeCancel').onclick = function(){ $('mergeModal').classList.add('hidden'); };
+$('exportViewBtn').onclick = exportView;
+$('exportAllBtn').onclick = exportAll;
+</script>
+</body>
+</html>
