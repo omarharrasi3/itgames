@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="stylesheet" href="../ITGames_Palettes.css">
+<script src="../ITGames_Config.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#050a2e; --bg2:var(--td2); --line:#3d5afe;
+    --gold:#ffc832; --gold2:#ffe9a0; --text:#eef1ff; --muted:#9fa8da;
+    --ok:#1faa59; --bad:#d63031;
+  }
+  body{ --bg1:var(--td2); --bg2:var(--td1); --line:var(--a1); --gold:var(--hl); --gold2:var(--hl); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Cairo',Tahoma,Arial,sans-serif; color:var(--text);
+    background:radial-gradient(ellipse at 50% 0%,var(--a1d) 0%,var(--bg2) 35%,var(--bg1) 80%) fixed;
+    min-height:100%; overflow-x:hidden;
+  }
+  button,select,input{font-family:inherit}
+  button{cursor:pointer;border:none}
+  button:disabled{cursor:not-allowed}
+  .hidden{display:none !important}
+  .screen{min-height:100vh;padding:16px;display:flex;flex-direction:column;align-items:center}
+
+  .logo{
+    width:150px;height:150px;border-radius:50%;margin:14px auto 10px;
+    background:radial-gradient(circle at 35% 30%,var(--a1d),var(--td2) 70%);
+    border:5px solid var(--gold); box-shadow:0 0 40px rgba(255,200,50,.45),inset 0 0 30px rgba(0,0,0,.6);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    animation:glow 3s ease-in-out infinite;
+  }
+  .logo .q{font-size:58px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 18px rgba(255,200,50,.8)}
+  .logo .m{font-size:18px;font-weight:800;color:#fff;margin-top:4px}
+  @keyframes glow{50%{box-shadow:0 0 70px rgba(255,200,50,.7),inset 0 0 30px rgba(0,0,0,.6)}}
+  h1{font-size:clamp(26px,6vw,42px);font-weight:900;color:var(--gold);text-align:center;text-shadow:0 3px 0 var(--td2),0 0 25px rgba(255,200,50,.35)}
+  .subtitle{color:var(--muted);text-align:center;margin:6px 0 18px;font-weight:600}
+
+  .card{
+    width:100%;max-width:480px;background:color-mix(in srgb,var(--td1) 82%,transparent);border:2px solid var(--line);
+    border-radius:18px;padding:22px;box-shadow:0 10px 40px rgba(0,0,0,.5);
+  }
+  label{display:block;font-weight:700;margin:10px 0 6px;color:var(--gold2)}
+  input,select{
+    width:100%;padding:12px 14px;border-radius:12px;border:2px solid #3949ab;background:var(--td2);color:#fff;
+    font-size:17px;outline:none;
+  }
+  input:focus,select:focus{border-color:var(--gold)}
+  .hint{font-size:13px;color:var(--muted);margin-top:4px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:13px 22px;border-radius:40px;font-size:18px;font-weight:800;
+    background:linear-gradient(180deg,#ffd54f,#ff9f00);color:#2a1a00;
+    box-shadow:0 5px 0 #a35f00,0 8px 20px rgba(0,0,0,.4);transition:transform .1s;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #a35f00}
+  .btn:disabled{opacity:.6}
+  .btn.block{width:100%;margin-top:16px}
+  .status{margin-top:14px;font-size:14px;text-align:center;color:var(--muted);line-height:1.8}
+  .status.ok{color:#7ee2a8}.status.warn{color:#ffcc80}.status.err{color:#ff8a80}
+  .rules{margin-top:14px;font-size:14px;color:var(--muted);line-height:1.9}
+  .rules b{color:var(--gold2)}
+
+  #game{padding:12px}
+  .layout{width:100%;max-width:1200px;display:grid;grid-template-columns:1fr 240px;gap:18px;align-items:start}
+  .stage{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .lifelines{display:flex;gap:10px}
+  .life{
+    width:74px;height:50px;border-radius:50%;background:radial-gradient(circle,#283593,var(--td2));
+    border:3px solid var(--gold);color:#fff;font-weight:900;font-size:16px;
+    display:flex;align-items:center;justify-content:center;transition:transform .15s;position:relative;
+  }
+  .life:hover:not(:disabled){transform:scale(1.08)}
+  .life svg{width:26px;height:26px;fill:#fff}
+  .life.used{opacity:.35;border-color:#777}
+  .life.used::after{content:'';position:absolute;width:80%;height:3px;background:var(--bad);transform:rotate(-30deg);border-radius:3px}
+  .timer{
+    width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:26px;font-weight:900;color:#fff;position:relative;
+    background:conic-gradient(var(--gold) calc(var(--p,1)*360deg),var(--td1) 0);
+  }
+  .timer::before{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--bg2)}
+  .timer span{position:relative}
+  .timer.danger{background:conic-gradient(var(--bad) calc(var(--p,1)*360deg),var(--td1) 0)}
+  .timer.danger span{animation:pulse .5s infinite alternate}
+  @keyframes pulse{to{transform:scale(1.2);color:#ff7675}}
+  .score-pill{padding:8px 16px;border-radius:30px;background:var(--td1);border:2px solid var(--line);font-weight:800;color:var(--gold2)}
+  .qinfo{display:flex;justify-content:space-between;align-items:center;color:var(--gold2);font-weight:800;font-size:16px;gap:8px;flex-wrap:wrap}
+  .qinfo .lvl{font-size:13px;padding:3px 12px;border-radius:20px;background:var(--td1);border:1px solid var(--line);color:#c5cae9}
+  .ladder-toggle{display:none;padding:10px 16px;font-size:15px}
+
+  .hexbox{
+    background:linear-gradient(180deg,var(--td1),var(--td2));
+    border:3px solid var(--line);border-radius:40px;padding:26px 30px;
+    box-shadow:0 0 25px rgba(61,90,254,.45);
+  }
+  .question{font-size:clamp(19px,2.6vw,26px);font-weight:800;line-height:1.7;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ans{
+    display:flex;align-items:center;gap:12px;text-align:start;
+    background:linear-gradient(180deg,var(--td1),var(--td2));color:#fff;
+    border:3px solid var(--line);border-radius:40px;padding:14px 20px;min-height:66px;
+    font-size:clamp(15px,1.9vw,19px);font-weight:700;line-height:1.5;transition:background .2s,transform .1s;
+  }
+  .ans:hover:not(:disabled){border-color:var(--gold);transform:translateY(-2px)}
+  .ans .letter{color:var(--gold);font-weight:900;font-size:1.15em;flex-shrink:0}
+  .ans .txt{flex:1;min-width:0;overflow-wrap:anywhere}
+  .ans.selected{background:linear-gradient(180deg,#ffb74d,#ef6c00);border-color:#fff;color:#1b0f00}
+  .ans.selected .letter{color:#fff}
+  .ans.correct{background:linear-gradient(180deg,#43d17f,#138a45);border-color:#fff;color:#fff;animation:blink .35s 4}
+  .ans.correct .letter{color:#fff}
+  .ans.wrong{background:linear-gradient(180deg,#ff6b6b,#b71c1c);border-color:#fff}
+  .ans.wrong .letter{color:#fff}
+  .ans.removed{visibility:hidden}
+  .ans:disabled{opacity:1}
+  @keyframes blink{50%{filter:brightness(1.5)}}
+
+  .feedback{text-align:center;font-size:20px;font-weight:900;min-height:30px}
+  .feedback.ok{color:#7ee2a8}.feedback.bad{color:#ff8a80}
+  .helper{background:rgba(8,17,80,.9);border:2px solid var(--gold);border-radius:18px;padding:14px 18px;animation:pop .25s}
+  .helper h3{color:var(--gold);font-size:17px;margin-bottom:8px}
+  @keyframes pop{from{transform:scale(.92)}}
+  .bars{display:flex;gap:16px;align-items:flex-end;height:150px;justify-content:center;padding-top:10px}
+  .bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;width:52px}
+  .bar .fill{width:100%;background:linear-gradient(180deg,var(--gold),#ff8f00);border-radius:6px 6px 0 0;height:0;transition:height 1.2s ease-out}
+  .bar .pct{font-weight:800;font-size:14px;margin-bottom:4px}
+  .bar .lb{font-weight:900;color:var(--gold2);margin-top:4px}
+  .phone-text{font-size:17px;line-height:1.9}
+  .actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+  .ladder{background:rgba(8,17,80,.85);border:2px solid var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column-reverse;gap:3px}
+  .ladder .cap{color:var(--muted);font-size:12px;text-align:center;padding:4px}
+  .rung{display:flex;justify-content:space-between;padding:5px 12px;border-radius:20px;font-weight:800;font-size:15px;color:var(--gold)}
+  .rung .n{width:26px;color:var(--muted)}
+  .rung.done{color:#7ee2a8}
+  .rung.done .n{color:#7ee2a8}
+  .rung.current{background:linear-gradient(90deg,#ff9f00,#ffd54f);color:#1b0f00}
+  .rung.current .n{color:#1b0f00}
+
+  .result-score{font-size:clamp(46px,10vw,78px);font-weight:900;color:var(--gold);text-align:center;text-shadow:0 0 30px rgba(255,200,50,.6);direction:ltr}
+  .result-msg{font-size:22px;font-weight:800;text-align:center;margin:6px 0}
+  .result-sub{text-align:center;color:var(--muted);margin-bottom:6px;line-height:1.8}
+  .review{margin-top:14px;max-height:240px;overflow:auto;font-size:14px;line-height:1.8;background:var(--td2);border-radius:12px;padding:10px 14px;text-align:start}
+  .review .r{color:#ffcdd2}
+  .review .g{color:#a5f3c6}
+
+  .confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:50;animation:fall linear forwards;pointer-events:none}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+  .overlay{position:fixed;inset:0;background:rgba(5,10,46,.7);display:flex;align-items:center;justify-content:center;z-index:80;font-weight:800;font-size:20px}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--td2);border:2px solid var(--gold);border-radius:30px;padding:10px 20px;font-weight:700;z-index:90}
+
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr}
+    .ladder{position:fixed;top:0;bottom:0;left:0;width:230px;z-index:40;border-radius:0 18px 18px 0;overflow:auto;justify-content:flex-end;transform:translateX(-105%);transition:transform .25s}
+    .ladder.open{transform:none}
+    .ladder-toggle{display:inline-flex}
+  }
+  @media (max-width:600px){
+    .answers{grid-template-columns:1fr}
+    .hexbox{padding:18px;border-radius:24px}
+    .ans{border-radius:24px;min-height:56px}
+    .life{width:60px;height:44px;font-size:14px}
+    .timer{width:60px;height:60px;font-size:22px}
+  }
+</style>
+</head>
+<body class="pal-__PALETTE__">
+
+<!-- ============ شاشة البداية ============ -->
+<section id="start" class="screen">
+  <div class="logo"><div class="q">؟</div><div class="m">المليون</div></div>
+  <h1>من سيربح المليون</h1>
+  <p class="subtitle" id="subtitle">جارٍ التحميل…</p>
+  <div class="card">
+    <label for="playerName">اسمك (الاسم الأول واسم العائلة)</label>
+    <input id="playerName" maxlength="60" placeholder="مثال: أحمد البلوشي" autocomplete="off">
+    <div class="hint">اكتب اسمك بالطريقة نفسها في كل مرة.</div>
+    <label for="playerClass">الشعبة</label>
+    <select id="playerClass"><option value="">اختر شعبتك</option></select>
+    <button id="startBtn" class="btn block" disabled>ابدأ اللعب ▶</button>
+    <div id="startStatus" class="status"></div>
+    <div class="rules" id="rules"></div>
+  </div>
+</section>
+
+<!-- ============ شاشة اللعب ============ -->
+<section id="game" class="screen hidden">
+  <div class="layout">
+    <div class="stage">
+      <div class="topbar">
+        <div class="lifelines">
+          <button class="life" id="l5050" title="حذف إجابتين">50:50</button>
+          <button class="life" id="lAud" title="رأي الجمهور" aria-label="رأي الجمهور">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </button>
+          <button class="life" id="lPhone" title="الاتصال بصديق" aria-label="الاتصال بصديق">
+            <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          </button>
+        </div>
+        <div class="timer" id="timer"><span id="timerTxt">30</span></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="score-pill" id="scorePill">0 ✔</span>
+          <button class="btn ladder-toggle" id="ladderBtn">السلّم</button>
+        </div>
+      </div>
+
+      <div class="qinfo">
+        <span id="qCounter">السؤال 1 من 15</span>
+        <span class="lvl" id="qLevel">سهل</span>
+      </div>
+
+      <div class="hexbox"><div class="question" id="qText"></div></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <div id="helper" class="helper hidden"></div>
+      <div class="actions"><button id="nextBtn" class="btn hidden">السؤال التالي ◀</button></div>
+    </div>
+    <aside class="ladder" id="ladder"></aside>
+  </div>
+</section>
+
+<!-- ============ شاشة النهاية ============ -->
+<section id="end" class="screen hidden">
+  <div class="logo" style="width:110px;height:110px"><div class="q" style="font-size:44px" id="endIcon">🏆</div></div>
+  <div class="card" style="max-width:580px">
+    <div class="result-msg" id="endMsg"></div>
+    <div class="result-score" id="endScore">0 / 15</div>
+    <div class="result-sub" id="endSub"></div>
+    <div id="saveStatus" class="status"></div>
+    <div class="review" id="review"></div>
+    <button id="againBtn" class="btn block">العودة إلى البداية</button>
+  </div>
+</section>
+
+<div id="overlay" class="overlay hidden">لحظة من فضلك…</div>
+
+<script>
+var PRIZES = [100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
+var LETTERS = ['أ','ب','ج','د'];
+var LEVEL_NAMES = {1:'سهل', 2:'متوسط', 3:'صعب'};
+var INFO = null, S = null;
+
+function $(id){ return document.getElementById(id); }
+function fmt(n){ return Number(n).toLocaleString('en-US'); }
+function show(id){
+  ['start','game','end'].forEach(function(s){ $(s).classList.toggle('hidden', s !== id); });
+  window.scrollTo(0,0);
+}
+function dirOf(t){ return /[؀-ۿ]/.test(t) ? 'rtl' : 'ltr'; }
+function toast(msg){
+  var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3000);
+}
+function busy(on){ $('overlay').classList.toggle('hidden', !on); }
+
+/* رمز هذه اللعبة في خادم النتائج (ITGames_Questions_G6.gs) */
+var GAME_ID = '__GAME_ID__';
+function server(){ return itgamesCall.apply(null, arguments); }
+
+/* ---------------- التحميل ---------------- */
+function init(){
+  server('getGameInfo', GAME_ID).then(function(info){
+      INFO = info;
+      document.title = info.title;
+      $('subtitle').textContent = info.subtitle;
+      var sel = $('playerClass');
+      info.classes.forEach(function(c){ var o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+      $('rules').innerHTML =
+        '• ' + info.count + ' سؤالًا تتدرج من السهل إلى الصعب.<br>' +
+        '• الإجابة الخاطئة لا تُنهي اللعبة؛ أكمل حتى آخر سؤال.<br>' +
+        '• كل إجابة صحيحة ترفعك درجة في سلّم الجوائز.<br>' +
+        '• لديك 3 وسائل مساعدة: <b>حذف إجابتين</b>، <b>رأي الجمهور</b>، <b>الاتصال بصديق</b>.<br>' +
+        '• <b>المحاولة الأولى فقط هي التي تُحتسب درجةً.</b>';
+      $('startBtn').disabled = false;
+    }).catch(function(e){
+      $('subtitle').textContent = '';
+      var st = $('startStatus'); st.className = 'status err'; st.textContent = e.message;
+    });
+}
+
+/* ---------------- السلّم ---------------- */
+function buildLadder(){
+  var L = $('ladder'); L.innerHTML = '';
+  for (var i = 0; i < S.qs.length; i++) {
+    var d = document.createElement('div'); d.className = 'rung'; d.id = 'rung' + i;
+    var n = document.createElement('span'); n.className = 'n'; n.textContent = i + 1;
+    var v = document.createElement('span'); v.textContent = fmt(PRIZES[i] || 0);
+    d.appendChild(n); d.appendChild(v); L.appendChild(d);
+  }
+  var cap = document.createElement('div'); cap.className = 'cap'; cap.textContent = 'تصعد درجة مع كل إجابة صحيحة';
+  L.insertBefore(cap, L.firstChild);
+}
+function updateLadder(){
+  for (var i = 0; i < S.qs.length; i++) {
+    var r = $('rung' + i);
+    r.classList.toggle('done', i < S.correct);
+    r.classList.toggle('current', i === S.correct);
+  }
+  $('scorePill').textContent = S.correct + ' ✔';
+}
+
+/* ---------------- اللعبة ---------------- */
+function startGame(){
+  var name = $('playerName').value.replace(/\s+/g, ' ').trim();
+  var cls = $('playerClass').value;
+  if (name.split(' ').length < 2) { $('playerName').focus(); toast('اكتب اسمك الأول واسم العائلة'); return; }
+  if (!cls) { $('playerClass').focus(); toast('اختر شعبتك'); return; }
+  busy(true);
+  server('startGame', INFO.id, name, cls).then(function(res){
+    busy(false);
+    S = { name: name, cls: cls, token: res.token, qs: res.questions, i: 0, correct: 0,
+          locked: false, timer: null, timeLeft: 0, used: {f:false, a:false, p:false}, removed: [] };
+    ['l5050','lAud','lPhone'].forEach(function(id){ $(id).classList.remove('used'); });
+    buildLadder();
+    show('game');
+    renderQuestion();
+  }).catch(function(e){ busy(false); toast(e.message); });
+}
+
+function renderQuestion(){
+  var q = S.qs[S.i];
+  S.locked = false; S.removed = [];
+  $('helper').classList.add('hidden');
+  $('nextBtn').classList.add('hidden');
+  $('feedback').textContent = ''; $('feedback').className = 'feedback';
+  $('qCounter').textContent = 'السؤال ' + (S.i + 1) + ' من ' + S.qs.length;
+  $('qLevel').textContent = LEVEL_NAMES[q.level];
+  var qt = $('qText'); qt.textContent = q.q; qt.dir = dirOf(q.q);
+  var box = $('answers'); box.innerHTML = '';
+  q.o.forEach(function(opt, k){
+    var b = document.createElement('button');
+    b.className = 'ans';
+    var l = document.createElement('span'); l.className = 'letter'; l.textContent = LETTERS[k] + ':';
+    var t = document.createElement('span'); t.className = 'txt'; t.textContent = opt; t.dir = dirOf(opt);
+    b.appendChild(l); b.appendChild(t);
+    b.addEventListener('click', function(){ choose(k); });
+    box.appendChild(b);
+  });
+  setLifelinesEnabled(true);
+  updateLadder();
+  startTimer((INFO.times && INFO.times[q.level]) || 30);
+}
+
+function setLifelinesEnabled(on){
+  $('l5050').disabled = !on || S.used.f;
+  $('lAud').disabled = !on || S.used.a;
+  $('lPhone').disabled = !on || S.used.p;
+}
+
+function startTimer(sec){
+  stopTimer();
+  S.timeLeft = sec; S.timeMax = sec; drawTimer();
+  S.timer = setInterval(function(){
+    S.timeLeft--; drawTimer();
+    if (S.timeLeft <= 0) { stopTimer(); choose(-1); }
+  }, 1000);
+}
+function stopTimer(){ if (S && S.timer) { clearInterval(S.timer); S.timer = null; } }
+function drawTimer(){
+  $('timerTxt').textContent = Math.max(0, S.timeLeft);
+  $('timer').style.setProperty('--p', Math.max(0, S.timeLeft) / S.timeMax);
+  $('timer').classList.toggle('danger', S.timeLeft <= 5);
+}
+function answerButtons(){ return Array.prototype.slice.call(document.querySelectorAll('#answers .ans')); }
+
+function choose(k){
+  if (S.locked || (k >= 0 && S.removed.indexOf(k) >= 0)) return;
+  S.locked = true;
+  stopTimer();
+  setLifelinesEnabled(false);
+  var btns = answerButtons();
+  btns.forEach(function(b){ b.disabled = true; });
+  if (k >= 0) btns[k].classList.add('selected');
+  var started = Date.now();
+  server('checkAnswer', S.token, S.i, k).then(function(res){
+    setTimeout(function(){ reveal(k, res); }, Math.max(0, 1300 - (Date.now() - started)));
+  }).catch(function(e){ toast(e.message); S.locked = false; });
+}
+
+function reveal(k, res){
+  var btns = answerButtons();
+  if (k >= 0) btns[k].classList.remove('selected');
+  var fb = $('feedback');
+  if (res.ok) {
+    S.correct++;
+    btns[k].classList.add('correct');
+    fb.textContent = '✔ إجابة صحيحة!'; fb.className = 'feedback ok';
+  } else {
+    if (k >= 0) btns[k].classList.add('wrong');
+    if (res.correct >= 0) btns[res.correct].classList.add('correct');
+    fb.textContent = k < 0 ? '⏰ انتهى الوقت' : '✘ إجابة خاطئة'; fb.className = 'feedback bad';
+  }
+  updateLadder();
+  var nb = $('nextBtn');
+  nb.textContent = S.i === S.qs.length - 1 ? 'إنهاء وعرض النتيجة 🏁' : 'السؤال التالي ◀';
+  nb.classList.remove('hidden'); nb.focus();
+}
+
+function next(){
+  if (S.i === S.qs.length - 1) { finish(); return; }
+  S.i++; renderQuestion();
+}
+
+/* ---------------- وسائل المساعدة ---------------- */
+function lifeline(kind, btnId){
+  if (S.locked || S.used[kind]) return;
+  S.used[kind] = true; $(btnId).classList.add('used'); $(btnId).disabled = true;
+  server('useLifeline', S.token, S.i, kind).then(function(res){
+    var btns = answerButtons(), h = $('helper');
+    if (kind === 'f') {
+      S.removed = S.removed.concat(res.removed);
+      res.removed.forEach(function(k){ btns[k].classList.add('removed'); btns[k].disabled = true; });
+      return;
+    }
+    h.innerHTML = ''; h.classList.remove('hidden');
+    var title = document.createElement('h3');
+    if (kind === 'a') {
+      title.textContent = '📊 رأي الجمهور'; h.appendChild(title);
+      var bars = document.createElement('div'); bars.className = 'bars';
+      res.votes.forEach(function(v, k){
+        var b = document.createElement('div'); b.className = 'bar';
+        var p = document.createElement('div'); p.className = 'pct'; p.textContent = v + '%';
+        var f = document.createElement('div'); f.className = 'fill';
+        var l = document.createElement('div'); l.className = 'lb'; l.textContent = LETTERS[k];
+        b.appendChild(p); b.appendChild(f); b.appendChild(l); bars.appendChild(b);
+        setTimeout(function(){ f.style.height = Math.max(2, v * 1.05) + 'px'; }, 50);
+      });
+      h.appendChild(bars);
+    } else {
+      title.textContent = '📞 الاتصال بصديق'; h.appendChild(title);
+      var t = document.createElement('div'); t.className = 'phone-text';
+      t.textContent = 'صديقك يقول: «أعتقد أن الإجابة هي (' + LETTERS[res.pick] + ')، وأنا متأكد بنسبة ' + res.conf + '%».';
+      h.appendChild(t);
+    }
+  }).catch(function(e){ toast(e.message); });
+}
+
+/* ---------------- النهاية ---------------- */
+function finish(){
+  stopTimer();
+  busy(true);
+  server('finishGame', S.token).then(function(res){
+    busy(false);
+    var pct = res.correct / res.total;
+    $('endIcon').textContent = pct >= 0.9 ? '🏆' : pct >= 0.6 ? '⭐' : '💪';
+    $('endMsg').textContent = S.name + ' — ' + (pct >= 0.9 ? 'أداء ممتاز!' : pct >= 0.6 ? 'أحسنت!' : 'حاول أن تراجع الدرس جيدًا');
+    $('endScore').textContent = res.correct + ' / ' + res.total;
+    $('endSub').innerHTML = 'جائزتك: <b>' + fmt(res.correct ? PRIZES[res.correct - 1] : 0) + '</b><br>' +
+      (res.counts ? 'هذه محاولتك الأولى، وهي التي تُحتسب درجةً.'
+                  : 'هذه محاولتك رقم ' + res.attempt + ' (للتدريب فقط؛ الدرجة المعتمدة هي المحاولة الأولى).');
+    var st = $('saveStatus'); st.className = 'status ok'; st.textContent = '✅ تم حفظ نتيجتك.';
+    var rv = $('review'); rv.innerHTML = '';
+    (res.review || []).forEach(function(x, i){
+      var d = document.createElement('div'); d.className = x.ok ? 'g' : 'r';
+      d.textContent = (x.ok ? '✔ ' : '✘ ') + (i + 1) + '. ' + x.q;
+      rv.appendChild(d);
+    });
+    rv.classList.toggle('hidden', !(res.review || []).length);
+    show('end');
+    if (pct >= 0.9) confetti();
+  }).catch(function(e){
+    busy(false);
+    toast('تعذّر حفظ النتيجة: ' + e.message + ' — حاول مرة أخرى.');
+  });
+}
+
+function confetti(){
+  var colors = ['#ffc832','#ff6b6b','#43d17f','#4fc3f7','#ffffff','#ba68c8'];
+  for (var i = 0; i < 120; i++) {
+    var c = document.createElement('div'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = colors[i % colors.length];
+    c.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+    c.style.animationDelay = Math.random() * 1.5 + 's';
+    document.body.appendChild(c);
+    (function(el){ setTimeout(function(){ el.remove(); }, 7000); })(c);
+  }
+}
+
+/* ---------------- الأحداث ---------------- */
+$('startBtn').addEventListener('click', startGame);
+$('playerName').addEventListener('keydown', function(e){ if (e.key === 'Enter') startGame(); });
+$('nextBtn').addEventListener('click', next);
+$('againBtn').addEventListener('click', function(){ show('start'); });
+$('l5050').addEventListener('click', function(){ lifeline('f', 'l5050'); });
+$('lAud').addEventListener('click', function(){ lifeline('a', 'lAud'); });
+$('lPhone').addEventListener('click', function(){ lifeline('p', 'lPhone'); });
+$('ladderBtn').addEventListener('click', function(){ $('ladder').classList.toggle('open'); });
+$('ladder').addEventListener('click', function(){ $('ladder').classList.remove('open'); });
+init();
+</script>
+</body>
+</html>

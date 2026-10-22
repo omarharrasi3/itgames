@@ -1,0 +1,22 @@
+/* =====================================================================
+   ITGames_Palettes — 16 لوحة ألوان. كل لعبة تأخذ لوحة واحدة (body.pal-<name>)
+   القاعدة: لا تتكرر اللوحة نفسها لعبتين في الصف نفسه (يتحقق منها make_game_pages.py)
+   --a1 اللون الرئيس، --a1d داكن، --a1l فاتح، --a2 اللون الثاني، --a2d داكن
+   --tl1/--tl2 خلفيات فاتحة، --td1/--td2 خلفيات داكنة، --hl لون إبراز فاتح للعناوين على الخلفيات الداكنة
+   ===================================================================== */
+body.pal-red     { --a1:#e03131; --a1d:#a61e1e; --a1l:#ffa8a8; --a2:#f59f00; --a2d:#b36b00; --tl1:#fff5f5; --tl2:#ffe3e3; --td1:#5c1414; --td2:#2b0a0a; --hl:#ffd8a8; }
+body.pal-orange  { --a1:#f76707; --a1d:#b84a00; --a1l:#ffc078; --a2:#1c7ed6; --a2d:#0b4f96; --tl1:#fff9f0; --tl2:#ffe8cc; --td1:#6b2e05; --td2:#2e1403; --hl:#ffe066; }
+body.pal-amber   { --a1:#f59f00; --a1d:#a86b00; --a1l:#ffe066; --a2:#7048e8; --a2d:#4c2fb0; --tl1:#fffbeb; --tl2:#fff3bf; --td1:#5c4100; --td2:#2a1e00; --hl:#ffe066; }
+body.pal-green   { --a1:#2f9e44; --a1d:#1f6e2e; --a1l:#8ce99a; --a2:#f76707; --a2d:#b84a00; --tl1:#f4fce3; --tl2:#d3f9d8; --td1:#14532d; --td2:#0a2915; --hl:#c0eb75; }
+body.pal-teal    { --a1:#0ca678; --a1d:#087f5b; --a1l:#96f2d7; --a2:#e64980; --a2d:#a61e4d; --tl1:#e6fcf5; --tl2:#c3fae8; --td1:#0b4f3f; --td2:#052620; --hl:#96f2d7; }
+body.pal-cyan    { --a1:#1098ad; --a1d:#0b7285; --a1l:#99e9f2; --a2:#fab005; --a2d:#b37d00; --tl1:#e3fafc; --tl2:#c5f6fa; --td1:#0b4a55; --td2:#052329; --hl:#99e9f2; }
+body.pal-blue    { --a1:#1c7ed6; --a1d:#1864ab; --a1l:#a5d8ff; --a2:#ffd43b; --a2d:#b38f00; --tl1:#e7f5ff; --tl2:#d0ebff; --td1:#0b4f96; --td2:#062a52; --hl:#a5d8ff; }
+body.pal-indigo  { --a1:#4263eb; --a1d:#2f44b8; --a1l:#bac8ff; --a2:#ffc832; --a2d:#a37a00; --tl1:#edf2ff; --tl2:#dbe4ff; --td1:#1c2a8c; --td2:#0b1350; --hl:#ffc832; }
+body.pal-purple  { --a1:#7048e8; --a1d:#5f3dc4; --a1l:#b197fc; --a2:#20c997; --a2d:#0ca678; --tl1:#f3f0ff; --tl2:#e5dbff; --td1:#3b1f8f; --td2:#1a0d44; --hl:#e5dbff; }
+body.pal-pink    { --a1:#d6336c; --a1d:#a61e4d; --a1l:#fcc2d7; --a2:#15aabf; --a2d:#0b7285; --tl1:#fff0f6; --tl2:#ffdeeb; --td1:#5c1030; --td2:#2b0716; --hl:#fcc2d7; }
+body.pal-brown   { --a1:#a0522d; --a1d:#6f3a1f; --a1l:#e6b89c; --a2:#2f9e44; --a2d:#1f6e2e; --tl1:#fdf6ee; --tl2:#f3e1cf; --td1:#4a2814; --td2:#22120a; --hl:#ffd8a8; }
+body.pal-slate   { --a1:#495057; --a1d:#212529; --a1l:#ced4da; --a2:#fd7e14; --a2d:#b85a0b; --tl1:#f8f9fa; --tl2:#e9ecef; --td1:#2b3035; --td2:#121416; --hl:#ffc078; }
+body.pal-lime    { --a1:#74b816; --a1d:#4f7d0f; --a1l:#d8f5a2; --a2:#ae3ec9; --a2d:#862e9c; --tl1:#f4fce3; --tl2:#e9fac8; --td1:#2f4a09; --td2:#162304; --hl:#d8f5a2; }
+body.pal-grape   { --a1:#ae3ec9; --a1d:#862e9c; --a1l:#eebefa; --a2:#fab005; --a2d:#b37d00; --tl1:#f8f0fc; --tl2:#f3d9fa; --td1:#4a1557; --td2:#220a28; --hl:#eebefa; }
+body.pal-navy    { --a1:#1b3a6b; --a1d:#0f2343; --a1l:#9db4dd; --a2:#f03e3e; --a2d:#a61e1e; --tl1:#eef3fb; --tl2:#d6e2f5; --td1:#0f2343; --td2:#060f1f; --hl:#ffd43b; }
+body.pal-crimson { --a1:#c2255c; --a1d:#8c1b42; --a1l:#ffb3cc; --a2:#2b8a3e; --a2d:#1b5e2a; --tl1:#fff0f5; --tl2:#ffd6e5; --td1:#4a0e24; --td2:#220611; --hl:#ffb3cc; }

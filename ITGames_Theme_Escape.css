@@ -1,30 +1,33 @@
-/* ITGames_Theme_Escape — «الخزنة المغلقة»: حجارة داكنة وتوهج أحمر وكهرماني */
-:root{ --text:#f6e7d8; --muted:#c7a98f; --gold:#ffb347; --gold2:#ffcf8a; --line:#7a2e1f; --chip:#2a1612; }
-body.theme-escape{ font-family:'Cairo',Tahoma,sans-serif;
-  background:radial-gradient(circle at 50% 30%,rgba(255,80,40,.18),transparent 45%),
-             repeating-linear-gradient(0deg,#1b1210 0 38px,#140d0b 38px 40px),
-             repeating-linear-gradient(90deg,transparent 0 78px,#0d0807 78px 80px), #1b1210; }
-.theme-escape h1{ font-family:'Lalezar','Cairo',sans-serif; font-weight:400; color:#ffb347; text-shadow:0 0 22px rgba(255,90,40,.7); letter-spacing:1px; }
-.theme-escape .subtitle{ color:#d9b08c; }
-.theme-escape .card{ background:rgba(30,16,12,.92); border:2px solid #7a2e1f; border-radius:10px; box-shadow:0 0 40px rgba(255,70,30,.25),inset 0 0 30px rgba(0,0,0,.6); }
-.theme-escape label{ color:#ffcf8a; }
-.theme-escape input,.theme-escape select{ background:#120a08; border-color:#7a2e1f; }
-.theme-escape .btn{ background:linear-gradient(180deg,#ff6b3d,#b3261e); color:#fff; box-shadow:0 5px 0 #5a1310,0 0 24px rgba(255,80,40,.5); font-family:'Lalezar','Cairo',sans-serif; font-weight:400; font-size:21px; }
-.theme-escape .btn.blue{ background:linear-gradient(180deg,#ffb347,#c46a00); }
+/* ITGames_Theme_Escape — «الخزنة المغلقة»: جدران حجرية داكنة وتوهج. لون التوهج من لوحة اللعبة */
+body.theme-escape{ --text:#f6eee6; --muted:#c9b8a8;
+  font-family:'Cairo',Tahoma,sans-serif; color:var(--text);
+  background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--a1) 28%,transparent),transparent 45%),
+             repeating-linear-gradient(0deg,#1b1513 0 38px,#120e0c 38px 40px),
+             repeating-linear-gradient(90deg,transparent 0 78px,#0b0807 78px 80px), #1b1513; }
+.theme-escape h1{ font-family:'Lalezar','Cairo',sans-serif; font-weight:400; color:var(--a1l); text-shadow:0 0 22px var(--a1); letter-spacing:1px; }
+.theme-escape .subtitle{ color:#d8c6b4; }
+.theme-escape .card{ background:rgba(28,20,17,.93); border:2px solid var(--a1d); border-radius:10px; box-shadow:0 0 40px color-mix(in srgb,var(--a1) 30%,transparent),inset 0 0 30px rgba(0,0,0,.6); }
+.theme-escape label{ color:var(--a1l); }
+.theme-escape input,.theme-escape select{ background:#120c0a; border-color:var(--a1d); color:#fff; }
+.theme-escape .rules,.theme-escape .hint,.theme-escape .status{ color:#c9b8a8; } .theme-escape .rules b{ color:var(--a2); }
+.theme-escape .btn{ background:linear-gradient(180deg,var(--a1),var(--a1d)); color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.6),0 0 24px var(--a1); font-family:'Lalezar','Cairo',sans-serif; font-weight:400; font-size:21px; }
+.theme-escape .btn.blue{ background:linear-gradient(180deg,var(--a2),var(--a2d)); }
 .theme-escape .hero{ display:flex; justify-content:center; margin:20px 0 8px; }
 .theme-escape .vault{ width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#4a3a33 0 30%,#2a1f1b 31% 60%,#5a463d 61% 66%,#2a1f1b 67%);
-  border:8px solid #6b5348; box-shadow:0 0 30px rgba(255,90,40,.6),inset 0 0 20px #000; display:flex; align-items:center; justify-content:center;
+  border:8px solid #6b5348; box-shadow:0 0 30px var(--a1),inset 0 0 20px #000; display:flex; align-items:center; justify-content:center;
   font-size:52px; animation:glowv 2.5s ease-in-out infinite; }
 .theme-escape .vault span{ animation:spin 6s linear infinite; display:inline-block; }
-@keyframes glowv{ 50%{ box-shadow:0 0 60px rgba(255,90,40,.9),inset 0 0 20px #000; } }
+@keyframes glowv{ 50%{ box-shadow:0 0 60px var(--a1),inset 0 0 20px #000; } }
 @keyframes spin{ to{ transform:rotate(360deg); } }
-.theme-escape .opt{ background:linear-gradient(180deg,#3a201a,#1e100d); border:2px solid #7a2e1f; border-radius:8px; }
-.theme-escape .opt:hover:not(:disabled){ border-color:#ffb347; box-shadow:0 0 12px rgba(255,179,71,.5); }
-.theme-escape .opt .l{ color:#ffb347; }
-.theme-escape .pill{ background:#2a1612; border-color:#7a2e1f; color:#ffcf8a; }
-.theme-escape .pill.time{ font-size:20px; border-color:#ff6b3d; }
-.theme-escape .progress{ background:#2a1612; } .theme-escape .progress>div{ background:linear-gradient(90deg,#ff6b3d,#ffb347); }
+.theme-escape .opt{ background:linear-gradient(180deg,#33241f,#1c120f); border:2px solid var(--a1d); border-radius:8px; }
+.theme-escape .opt:hover:not(:disabled){ border-color:var(--a1l); box-shadow:0 0 12px var(--a1); }
+.theme-escape .opt .l{ color:var(--a1l); }
+.theme-escape .pill{ background:#241815; border-color:var(--a1d); color:var(--a1l); }
+.theme-escape .pill.time{ font-size:20px; border-color:var(--a1); }
+.theme-escape .progress{ background:#241815; } .theme-escape .progress>div{ background:linear-gradient(90deg,var(--a1),var(--a1l)); }
 .theme-escape .lock{ font-size:34px; }
-.theme-escape .lock.open{ filter:drop-shadow(0 0 10px #ffb347); }
-.theme-escape .result-score{ color:#ffb347; text-shadow:0 0 30px rgba(255,90,40,.7); font-family:'Lalezar','Cairo',sans-serif; font-weight:400; }
-.theme-escape .badge{ background:#2a1f1b; border-color:#ff6b3d; box-shadow:0 0 30px rgba(255,90,40,.6); }
+.theme-escape .lock.open{ filter:drop-shadow(0 0 10px var(--a1l)); }
+.theme-escape .review{ background:#140d0b; }
+.theme-escape .result-score{ color:var(--a1l); text-shadow:0 0 30px var(--a1); font-family:'Lalezar','Cairo',sans-serif; font-weight:400; }
+.theme-escape .badge{ background:#2a1f1b; border-color:var(--a1); box-shadow:0 0 30px var(--a1); }
+.theme-escape .toast{ background:#1c1411; border-color:var(--a1); }

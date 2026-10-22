@@ -42,11 +42,11 @@ ITG.themes = {
 };
 
 /* ---------- بناء الصفحة ---------- */
-ITG.boot = function (gameId, type) {
+ITG.boot = function (gameId, type, palette) {
   ITG.gameId = gameId;
   var th = ITG.themes[type] || { hero: '<div class="badge">🎮</div>', start: 'ابدأ ▶', top: '', end: ['🏆', '⭐', '💪'] };
   ITG.theme = th;
-  document.body.className = 'theme-' + type;
+  document.body.className = 'theme-' + type + (palette ? ' pal-' + palette : '');
   document.body.innerHTML =
     '<section id="itgStart" class="screen">' + th.top +
     '  ' + th.hero + '<h1 id="itgTitle">…</h1><p class="subtitle" id="itgSub">جارٍ التحميل…</p>' +

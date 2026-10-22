@@ -1,33 +1,32 @@
-/* ITGames_Theme_Spot — «ملف المحقق»: خلفية داكنة، شريط تحذير أصفر، أوراق قضية */
-:root{ --text:#f3efe6; --muted:#bdb4a2; --gold:#ffd43b; --gold2:#ffd43b; --line:#5c564c; --chip:#2b2823; }
-body.theme-spot{ font-family:'Reem Kufi','Cairo',Tahoma,sans-serif;
+/* ITGames_Theme_Spot — «ملف المحقق»: غرفة داكنة، شريط تحذير، أوراق قضية. ألوان الشريط والأختام من لوحة اللعبة */
+body.theme-spot{ --text:#f3efe6; --muted:#bdb4a2;
+  font-family:'Reem Kufi','Cairo',Tahoma,sans-serif; color:var(--text);
   background:radial-gradient(ellipse at 50% 20%,#3a352d 0%,#1d1b18 60%,#121110 100%) fixed; }
 .theme-spot .tape{ width:120%; margin:0 -10%; padding:6px 0; text-align:center; font-weight:700; color:#111; letter-spacing:2px;
-  background:repeating-linear-gradient(45deg,#ffd43b 0 22px,#111 22px 44px); transform:rotate(-2deg); box-shadow:0 4px 12px rgba(0,0,0,.5); }
-.theme-spot .tape span{ background:#ffd43b; padding:2px 14px; }
-.theme-spot h1{ color:#ffd43b; text-shadow:0 0 18px rgba(255,212,59,.25); font-weight:700; }
+  background:repeating-linear-gradient(45deg,var(--a1) 0 22px,#111 22px 44px); transform:rotate(-2deg); box-shadow:0 4px 12px rgba(0,0,0,.5); }
+.theme-spot .tape span{ background:var(--a1); color:#111; padding:2px 14px; }
+.theme-spot h1{ color:var(--a1l); text-shadow:0 0 18px rgba(255,255,255,.12); font-weight:700; }
 .theme-spot .subtitle{ color:#cfc6b4; }
-.theme-spot .card{ background:#f4ecd8; color:#2b2620; border:none; border-radius:4px; box-shadow:0 12px 30px rgba(0,0,0,.6);
-  position:relative; }
-.theme-spot .card::before{ content:'ملف القضية'; position:absolute; top:-14px; right:24px; background:#c9a86a; color:#2b2620; padding:2px 14px; border-radius:6px 6px 0 0; font-weight:700; font-size:14px; }
-.theme-spot label{ color:#7a5c1e; }
+.theme-spot .card{ background:#f4ecd8; color:#2b2620; border:none; border-radius:4px; box-shadow:0 12px 30px rgba(0,0,0,.6); position:relative; }
+.theme-spot .card::before{ content:'ملف القضية'; position:absolute; top:-14px; right:24px; background:var(--a1l); color:#2b2620; padding:2px 14px; border-radius:6px 6px 0 0; font-weight:700; font-size:14px; }
+.theme-spot label{ color:var(--a1d); }
 .theme-spot input,.theme-spot select{ background:#fffaf0; color:#2b2620; border:1px solid #c9a86a; border-radius:2px; }
-.theme-spot .rules,.theme-spot .hint,.theme-spot .status{ color:#6b5f4c; } .theme-spot .rules b{ color:#a0522d; }
-.theme-spot .btn{ background:#2b2620; color:#ffd43b; border-radius:4px; box-shadow:0 4px 0 #000; }
-.theme-spot .btn.blue{ background:#ffd43b; color:#2b2620; }
+.theme-spot .rules,.theme-spot .hint,.theme-spot .status{ color:#6b5f4c; } .theme-spot .rules b{ color:var(--a2d); }
+.theme-spot .btn{ background:#2b2620; color:var(--a1l); border-radius:4px; box-shadow:0 4px 0 #000; }
+.theme-spot .btn.blue{ background:var(--a1); color:#fff; box-shadow:0 4px 0 var(--a1d); }
 .theme-spot .hero{ font-size:80px; margin:22px 0 4px; display:flex; justify-content:center; }
 .theme-spot .hero span{ display:inline-block; animation:search 3s ease-in-out infinite; transform-origin:70% 70%; }
 @keyframes search{ 0%,100%{ transform:translate(-20px,0) rotate(-10deg); } 50%{ transform:translate(20px,-8px) rotate(10deg); } }
 .theme-spot .q{ color:#2b2620; }
-.theme-spot .context{ background:#fffaf0; border:1px solid #c9a86a; border-right:6px solid #c0392b; color:#2b2620; font-family:'Courier New','Cairo',monospace; }
+.theme-spot .context{ background:#fffaf0; border:1px solid #c9a86a; border-right:6px solid var(--a1); color:#2b2620; font-family:'Courier New','Cairo',monospace; }
 .theme-spot .opt{ background:#fffaf0; color:#2b2620; border:2px solid #c9a86a; border-radius:4px; }
-.theme-spot .opt .l{ color:#c0392b; }
-.theme-spot .opt:hover:not(:disabled){ border-color:#2b2620; }
+.theme-spot .opt .l{ color:var(--a1d); }
+.theme-spot .opt:hover:not(:disabled){ border-color:var(--a1); }
 .theme-spot .opt.correct{ background:#2f9e44; color:#fff; } .theme-spot .opt.wrong{ background:#c0392b; color:#fff; }
 .theme-spot .feedback.ok{ background:#e3f6e5; color:#1e5f2b; } .theme-spot .feedback.bad{ background:#fdeaea; color:#8b1d1d; }
-.theme-spot .pill{ background:#2b2823; border-color:#ffd43b; border-radius:4px; }
-.theme-spot .progress{ border-radius:0; background:#2b2823; } .theme-spot .progress>div{ background:repeating-linear-gradient(45deg,#ffd43b 0 10px,#111 10px 20px); }
-.theme-spot .result-score{ color:#c0392b; text-shadow:none; }
+.theme-spot .pill{ background:#2b2823; border-color:var(--a1); border-radius:4px; color:var(--a1l); }
+.theme-spot .progress{ border-radius:0; background:#2b2823; } .theme-spot .progress>div{ background:repeating-linear-gradient(45deg,var(--a1) 0 10px,#111 10px 20px); }
+.theme-spot .result-score{ color:var(--a1d); text-shadow:none; }
 .theme-spot .result-msg{ color:#2b2620; } .theme-spot .result-sub{ color:#6b5f4c; }
 .theme-spot .review{ background:#fffaf0; } .theme-spot .review .g{ color:#1e5f2b; } .theme-spot .review .r{ color:#8b1d1d; }
-.theme-spot .badge{ border-radius:4px; background:#f4ecd8; border-color:#ffd43b; box-shadow:none; }
+.theme-spot .badge{ border-radius:4px; background:#f4ecd8; border-color:var(--a1); box-shadow:none; }
