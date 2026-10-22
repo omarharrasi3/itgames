@@ -27,18 +27,35 @@ ITG.show = function (id) {
 ITG.call = function () { return itgamesCall.apply(null, arguments); };
 ITG.icons = { sort: '🧺', order: '🔢', spot: '🔍', scenario: '🛡️', escape: '🔐' };
 
+/* لكل نوع لعبة واجهة مختلفة: رسمة البداية، نص زر البدء، أيقونات النهاية */
+ITG.themes = {
+  sort:     { hero: '<div class="hero"><span>🍎</span><span>🧺</span><span>🍊</span></div>',
+              start: 'ابدأ التصنيف 🧺', top: '', end: ['🧺', '🍏', '🌱'] },
+  order:    { hero: '<div class="hero"><b>1</b><i>←</i><b>2</b><i>←</i><b>3</b></div>',
+              start: 'ابدأ الترتيب 📐', top: '', end: ['🏗️', '📐', '🔧'] },
+  spot:     { hero: '<div class="hero"><span>🔍</span></div>',
+              start: 'افتح الملف 🗂️', top: '<div class="tape"><span>⚠ تحقيق جارٍ — ابحث عن الخطأ ⚠</span></div>', end: ['🕵️', '🔎', '📁'] },
+  escape:   { hero: '<div class="hero"><div class="vault"><span>🔒</span></div></div>',
+              start: 'ادخل الغرفة 🚪', top: '', end: ['🏃', '🔓', '⏳'] },
+  scenario: { hero: '<div class="hero"><div class="bubble b1">ماذا تفعل؟</div><div class="bubble b2">🤔</div></div>',
+              start: 'ابدأ القصة 📖', top: '', end: ['🦸', '🛡️', '📚'] }
+};
+
 /* ---------- بناء الصفحة ---------- */
-ITG.boot = function (gameId) {
+ITG.boot = function (gameId, type) {
   ITG.gameId = gameId;
+  var th = ITG.themes[type] || { hero: '<div class="badge">🎮</div>', start: 'ابدأ ▶', top: '', end: ['🏆', '⭐', '💪'] };
+  ITG.theme = th;
+  document.body.className = 'theme-' + type;
   document.body.innerHTML =
-    '<section id="itgStart" class="screen">' +
-    '  <div class="badge" id="itgIcon">🎮</div><h1 id="itgTitle">…</h1><p class="subtitle" id="itgSub">جارٍ التحميل…</p>' +
+    '<section id="itgStart" class="screen">' + th.top +
+    '  ' + th.hero + '<h1 id="itgTitle">…</h1><p class="subtitle" id="itgSub">جارٍ التحميل…</p>' +
     '  <div class="card">' +
     '    <label for="itgName">اسمك (الاسم الأول واسم العائلة)</label>' +
     '    <input id="itgName" maxlength="60" placeholder="مثال: أحمد البلوشي" autocomplete="off">' +
     '    <div class="hint">اكتب اسمك بالطريقة نفسها في كل مرة.</div>' +
     '    <label for="itgClass">الشعبة</label><select id="itgClass"><option value="">اختر شعبتك</option></select>' +
-    '    <button class="btn block" id="itgStartBtn" disabled>ابدأ ▶</button>' +
+    '    <button class="btn block" id="itgStartBtn" disabled>' + th.start + '</button>' +
     '    <div class="status" id="itgStatus"></div><div class="rules" id="itgRules"></div>' +
     '  </div></section>' +
     '<section id="itgPlay" class="screen hidden">' +
@@ -61,7 +78,6 @@ ITG.boot = function (gameId) {
   ITG.call('getGameInfo', gameId).then(function (info) {
     ITG.info = info;
     document.title = info.title;
-    ITG.$('itgIcon').textContent = ITG.icons[info.type] || '🎮';
     ITG.$('itgTitle').textContent = info.title;
     ITG.$('itgSub').textContent = info.subtitle;
     info.classes.forEach(function (c) { var o = ITG.el('option', '', c); o.value = c; ITG.$('itgClass').appendChild(o); });
@@ -161,7 +177,7 @@ ITG.finish = function () {
   ITG.call('finishGame', ITG.token).then(function (res) {
     ITG.busy(false);
     var pct = res.total ? res.correct / res.total : 0;
-    ITG.$('itgEndIcon').textContent = pct >= 0.9 ? '🏆' : pct >= 0.6 ? '⭐' : '💪';
+    ITG.$('itgEndIcon').textContent = ITG.theme.end[pct >= 0.9 ? 0 : pct >= 0.6 ? 1 : 2];
     ITG.$('itgEndMsg').textContent = ITG.name + ' — ' + (pct >= 0.9 ? 'أداء ممتاز!' : pct >= 0.6 ? 'أحسنت!' : 'راجع الدرس جيدًا وحاول مرة أخرى');
     ITG.$('itgEndScore').textContent = res.correct + ' / ' + res.total;
     ITG.$('itgEndSub').textContent = res.counts ? 'هذه محاولتك الأولى، وهي التي تُحتسب درجةً.'

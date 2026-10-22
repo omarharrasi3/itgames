@@ -1,0 +1,30 @@
+/* ITGames_Theme_Escape — «الخزنة المغلقة»: حجارة داكنة وتوهج أحمر وكهرماني */
+:root{ --text:#f6e7d8; --muted:#c7a98f; --gold:#ffb347; --gold2:#ffcf8a; --line:#7a2e1f; --chip:#2a1612; }
+body.theme-escape{ font-family:'Cairo',Tahoma,sans-serif;
+  background:radial-gradient(circle at 50% 30%,rgba(255,80,40,.18),transparent 45%),
+             repeating-linear-gradient(0deg,#1b1210 0 38px,#140d0b 38px 40px),
+             repeating-linear-gradient(90deg,transparent 0 78px,#0d0807 78px 80px), #1b1210; }
+.theme-escape h1{ font-family:'Lalezar','Cairo',sans-serif; font-weight:400; color:#ffb347; text-shadow:0 0 22px rgba(255,90,40,.7); letter-spacing:1px; }
+.theme-escape .subtitle{ color:#d9b08c; }
+.theme-escape .card{ background:rgba(30,16,12,.92); border:2px solid #7a2e1f; border-radius:10px; box-shadow:0 0 40px rgba(255,70,30,.25),inset 0 0 30px rgba(0,0,0,.6); }
+.theme-escape label{ color:#ffcf8a; }
+.theme-escape input,.theme-escape select{ background:#120a08; border-color:#7a2e1f; }
+.theme-escape .btn{ background:linear-gradient(180deg,#ff6b3d,#b3261e); color:#fff; box-shadow:0 5px 0 #5a1310,0 0 24px rgba(255,80,40,.5); font-family:'Lalezar','Cairo',sans-serif; font-weight:400; font-size:21px; }
+.theme-escape .btn.blue{ background:linear-gradient(180deg,#ffb347,#c46a00); }
+.theme-escape .hero{ display:flex; justify-content:center; margin:20px 0 8px; }
+.theme-escape .vault{ width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,#4a3a33 0 30%,#2a1f1b 31% 60%,#5a463d 61% 66%,#2a1f1b 67%);
+  border:8px solid #6b5348; box-shadow:0 0 30px rgba(255,90,40,.6),inset 0 0 20px #000; display:flex; align-items:center; justify-content:center;
+  font-size:52px; animation:glowv 2.5s ease-in-out infinite; }
+.theme-escape .vault span{ animation:spin 6s linear infinite; display:inline-block; }
+@keyframes glowv{ 50%{ box-shadow:0 0 60px rgba(255,90,40,.9),inset 0 0 20px #000; } }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.theme-escape .opt{ background:linear-gradient(180deg,#3a201a,#1e100d); border:2px solid #7a2e1f; border-radius:8px; }
+.theme-escape .opt:hover:not(:disabled){ border-color:#ffb347; box-shadow:0 0 12px rgba(255,179,71,.5); }
+.theme-escape .opt .l{ color:#ffb347; }
+.theme-escape .pill{ background:#2a1612; border-color:#7a2e1f; color:#ffcf8a; }
+.theme-escape .pill.time{ font-size:20px; border-color:#ff6b3d; }
+.theme-escape .progress{ background:#2a1612; } .theme-escape .progress>div{ background:linear-gradient(90deg,#ff6b3d,#ffb347); }
+.theme-escape .lock{ font-size:34px; }
+.theme-escape .lock.open{ filter:drop-shadow(0 0 10px #ffb347); }
+.theme-escape .result-score{ color:#ffb347; text-shadow:0 0 30px rgba(255,90,40,.7); font-family:'Lalezar','Cairo',sans-serif; font-weight:400; }
+.theme-escape .badge{ background:#2a1f1b; border-color:#ff6b3d; box-shadow:0 0 30px rgba(255,90,40,.6); }

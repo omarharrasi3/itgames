@@ -1,0 +1,29 @@
+/* ITGames_Theme_Order — «مخطط المهندس»: أزرق المخططات مع شبكة بيضاء */
+:root{ --text:#eaf4ff; --muted:#a8cff5; --gold:#ffffff; --gold2:#9fe0ff; --line:#7cc4ff; --chip:#0b4a8a; }
+body.theme-order{ font-family:'Changa','Cairo',Tahoma,sans-serif;
+  background-color:#0b4f96;
+  background-image:linear-gradient(rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px),
+                   linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:80px 80px,80px 80px,16px 16px,16px 16px; }
+.theme-order h1{ color:#fff; text-shadow:none; letter-spacing:1px; font-weight:700; }
+.theme-order .subtitle{ color:#bfe3ff; }
+.theme-order .card{ background:rgba(6,47,96,.85); border:2px dashed #9fe0ff; border-radius:6px; box-shadow:none; }
+.theme-order label{ color:#9fe0ff; }
+.theme-order input,.theme-order select{ background:#063767; border:1px solid #7cc4ff; border-radius:4px; }
+.theme-order .btn{ border-radius:6px; background:#fff; color:#0b4f96; box-shadow:4px 4px 0 #04305e; }
+.theme-order .btn.blue{ background:#ffd43b; color:#3a2a00; box-shadow:4px 4px 0 #04305e; }
+.theme-order .hero{ display:flex; align-items:center; gap:10px; justify-content:center; margin:24px 0 10px; }
+.theme-order .hero b{ width:62px; height:62px; border:3px solid #fff; display:flex; align-items:center; justify-content:center; font-size:30px; color:#fff;
+  animation:bpflash 2.4s infinite; }
+.theme-order .hero b:nth-of-type(2){ animation-delay:.4s; } .theme-order .hero b:nth-of-type(3){ animation-delay:.8s; }
+.theme-order .hero i{ font-style:normal; font-size:28px; color:#9fe0ff; }
+@keyframes bpflash{ 0%,70%,100%{ background:transparent; } 20%{ background:rgba(255,255,255,.25); } }
+.theme-order .pill{ background:#063767; border:1px solid #9fe0ff; border-radius:4px; color:#fff; }
+.theme-order .progress{ border-radius:0; background:#063767; } .theme-order .progress>div{ background:#fff; }
+.theme-order .step{ background:#063767; border:1px solid #7cc4ff; border-radius:4px; }
+.theme-order .step .n{ border-radius:4px; background:#fff; color:#0b4f96; }
+.theme-order .step .mv button{ background:#0b4f96; border:1px solid #9fe0ff; border-radius:4px; }
+.theme-order .step.right{ background:#0f5132; border-color:#69db7c; }
+.theme-order .step.wrongpos{ background:#5c1a1a; border-color:#ff8787; }
+.theme-order .result-score{ color:#fff; text-shadow:none; }
+.theme-order .badge{ border-radius:8px; background:#063767; border:3px solid #fff; box-shadow:none; }
